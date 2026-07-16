@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     MONGODB_DB: str = "mini_agent"
     MONGODB_COLLECTION: str = "embeddings"
     MONGODB_MEMORY_COLLECTION: str = "memories"
+    MONGODB_CHAT_COLLECTION: str = "chat_logs"
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -36,3 +37,4 @@ MONGODB_URI: str = settings.MONGODB_URI
 MONGODB_DB: str = settings.MONGODB_DB
 MONGODB_COLLECTION: str = settings.MONGODB_COLLECTION
 MONGODB_MEMORY_COLLECTION: str = settings.MONGODB_MEMORY_COLLECTION
+MONGODB_CHAT_COLLECTION: str = settings.MONGODB_CHAT_COLLECTION

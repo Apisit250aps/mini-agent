@@ -1,4 +1,5 @@
 import asyncio
+import time
 
 import typer
 from agents import Agent, Runner
@@ -11,6 +12,7 @@ from openai import AsyncOpenAI
 from agents import OpenAIChatCompletionsModel
 
 from app.agent import create_yuri_agent
+from app.logging.chat_logger import ChatLogger
 from config import settings
 
 set_default_openai_api("chat_completions")
@@ -33,8 +35,10 @@ console = Console()
 
 
 async def chat_loop() -> None:
-    welcome = Text("เริ่มแชตกับยูริได้เลย (พิมพ์ exit, quit หรือ ออก เพื่อจบโปรแกรม)")
-    console.print(Panel(welcome, title="Yuri CLI", border_style="cyan"))
+    logger = ChatLogger()
+
+    welcome = Text(f"เริ่มแชตกับยูริได้เลย (พิมพ์ exit, quit หรือ ออก เพื่อจบโปรแกรม)")
+    console.print(Panel(welcome, title=f"Yuri CLI  •  session {logger.session_id}", border_style="cyan"))
 
     input_items: list[TResponseInputItem] = []
 
@@ -53,9 +57,22 @@ async def chat_loop() -> None:
             break
 
         input_items.append({"role": "user", "content": user_text})
+
+        t0 = time.perf_counter()
         result = await Runner.run(agent, input_items)
+        duration_ms = int((time.perf_counter() - t0) * 1000)
+
         reply = (result.final_output or "").strip()
         console.print(f"[bold magenta]Yuri:[/bold magenta] {reply}")
+
+        logger.log_turn(
+            user_content=user_text,
+            result=result,
+            duration_ms=duration_ms,
+            model_name=settings.OLLAMA_MODEL,
+            output_content=reply,
+        )
+
         input_items = result.to_input_list()
 
 
@@ -71,3 +88,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
