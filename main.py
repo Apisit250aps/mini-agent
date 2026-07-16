@@ -1,8 +1,16 @@
-import os
+import asyncio
+
+import typer
 from agents import Agent, Runner
-from agents import set_default_openai_api, set_default_openai_client, set_tracing_export_api_key, set_tracing_disabled
+from agents.items import TResponseInputItem
+from agents import set_default_openai_api, set_tracing_disabled
+from rich.console import Console
+from rich.panel import Panel
+from rich.text import Text
 from openai import AsyncOpenAI
 from agents import OpenAIChatCompletionsModel
+
+from app.agent import create_yuri_agent
 
 set_default_openai_api("chat_completions")
 set_tracing_disabled(True)
@@ -17,9 +25,48 @@ model = OpenAIChatCompletionsModel(
     openai_client=client,
 )
 
-agent = Agent(name="Assistant",
-              instructions="You are a helpful assistant", model=model)
+agent: Agent = create_yuri_agent(model)
 
-result = Runner.run_sync(
-    agent, "Write a haiku about recursion in programming.")
-print(result.final_output)
+app = typer.Typer(add_completion=False, help="CLI แชตกับยูริ")
+console = Console()
+
+
+async def chat_loop() -> None:
+    welcome = Text("เริ่มแชตกับยูริได้เลย (พิมพ์ exit, quit หรือ ออก เพื่อจบโปรแกรม)")
+    console.print(Panel(welcome, title="Yuri CLI", border_style="cyan"))
+
+    input_items: list[TResponseInputItem] = []
+
+    while True:
+        try:
+            user_text = console.input("[bold green]master:[/bold green] ").strip()
+        except (EOFError, KeyboardInterrupt):
+            console.print("\n[bold magenta]Yuri:[/bold magenta] ไว้คุยกันใหม่นะคะ!")
+            break
+
+        if not user_text:
+            continue
+
+        if user_text.lower() in {"exit", "quit"} or user_text == "ออก":
+            console.print("[bold magenta]Yuri:[/bold magenta] บ๊ายบายค่ะ แล้วเจอกันใหม่!")
+            break
+
+        input_items.append({"role": "user", "content": user_text})
+        result = await Runner.run(agent, input_items)
+        reply = (result.final_output or "").strip()
+        console.print(f"[bold magenta]Yuri:[/bold magenta] {reply}")
+        input_items = result.to_input_list()
+
+
+@app.command()
+def chat() -> None:
+    """เริ่มโหมดสนทนากับยูริ"""
+    asyncio.run(chat_loop())
+
+
+def main() -> None:
+    app()
+
+
+if __name__ == "__main__":
+    main()

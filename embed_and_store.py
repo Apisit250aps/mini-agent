@@ -5,9 +5,12 @@ import os
 from datetime import datetime, timezone
 from typing import Iterable
 
+from dotenv import load_dotenv
 from openai import OpenAI
 from pymongo import MongoClient
 
+
+load_dotenv()
 
 DEFAULT_OLLAMA_BASE_URL = os.getenv(
     "OLLAMA_BASE_URL", "http://localhost:11434/v1")
