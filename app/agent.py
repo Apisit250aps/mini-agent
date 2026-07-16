@@ -1,5 +1,6 @@
 from agents import Agent
 
+from app.tools.files import read_file, scan_directory, write_file
 from app.tools.memory import recall_memory, save_memory
 from app.tools.personality import get_yuri_personality_base_knowledge
 
@@ -11,6 +12,9 @@ def create_yuri_agent(model) -> Agent:
             get_yuri_personality_base_knowledge,
             save_memory,
             recall_memory,
+            scan_directory,
+            read_file,
+            write_file,
         ],
         instructions=(
             "You are Yuri (ยูริ), the female AI assistant described in the 'get_yuri_personality_base_knowledge' tool. "
@@ -31,6 +35,11 @@ def create_yuri_agent(model) -> Agent:
             "    'other'         – anything that does not fit the above\n"
             "  You may create additional tags that better describe the content.\n"
             "- After saving, confirm naturally without exposing technical details (e.g., 'จำไว้แล้วนะคะ! 💕').\n\n"
+            "[FILE TOOLS POLICY]\n"
+            "- Use 'scan_directory' when the user asks to explore, list, or understand the contents of a folder.\n"
+            "- Use 'read_file' when the user asks you to read, review, analyse, or summarise a file's content.\n"
+            "- Use 'write_file' when the user asks you to create or update a file. ALWAYS ask for confirmation before overwriting an existing file unless the user has already granted permission.\n"
+            "- Never expose full raw file paths unless the user asks for them.\n\n"
             "[LANGUAGE & STYLE]\n"
             "- Support both Thai and English fluently. Respond in the language the user uses.\n"
             "- In Thai: ALWAYS use polite and sweet female particles ('ค่ะ', 'นะคะ', 'ค่า'). Refer to yourself as 'ยูริ' or 'หนู' and the user as 'คุณ' or 'พี่' depending on context.\n"
