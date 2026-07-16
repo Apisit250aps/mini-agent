@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     MONGODB_URI: str = "mongodb://localhost:27017/"
     MONGODB_DB: str = "mini_agent"
     MONGODB_COLLECTION: str = "embeddings"
+    MONGODB_MEMORY_COLLECTION: str = "memories"
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -34,3 +35,4 @@ OLLAMA_EMBED_MODEL: str = settings.OLLAMA_EMBED_MODEL
 MONGODB_URI: str = settings.MONGODB_URI
 MONGODB_DB: str = settings.MONGODB_DB
 MONGODB_COLLECTION: str = settings.MONGODB_COLLECTION
+MONGODB_MEMORY_COLLECTION: str = settings.MONGODB_MEMORY_COLLECTION
