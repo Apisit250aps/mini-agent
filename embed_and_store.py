@@ -1,25 +1,20 @@
 from __future__ import annotations
 
 import argparse
-import os
 from datetime import datetime, timezone
 from typing import Iterable
 
-from dotenv import load_dotenv
 from openai import OpenAI
 from pymongo import MongoClient
 
+from config import settings
 
-load_dotenv()
-
-DEFAULT_OLLAMA_BASE_URL = os.getenv(
-    "OLLAMA_BASE_URL", "http://localhost:11434/v1")
-DEFAULT_OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY", "ollama")
-DEFAULT_EMBED_MODEL = os.getenv("OLLAMA_EMBED_MODEL", "nomic-embed-text")
-DEFAULT_MONGODB_URI = os.getenv(
-    "MONGODB_URI", "mongodb://root:rootpassword@localhost:27017/?authSource=admin")
-DEFAULT_MONGODB_DB = os.getenv("MONGODB_DB", "mini_agent")
-DEFAULT_MONGODB_COLLECTION = os.getenv("MONGODB_COLLECTION", "embeddings")
+DEFAULT_OLLAMA_BASE_URL = settings.OLLAMA_BASE_URL
+DEFAULT_OLLAMA_API_KEY = settings.OLLAMA_API_KEY
+DEFAULT_EMBED_MODEL = settings.OLLAMA_EMBED_MODEL
+DEFAULT_MONGODB_URI = settings.MONGODB_URI
+DEFAULT_MONGODB_DB = settings.MONGODB_DB
+DEFAULT_MONGODB_COLLECTION = settings.MONGODB_COLLECTION
 
 
 def build_client() -> OpenAI:

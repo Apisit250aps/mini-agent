@@ -11,17 +11,18 @@ from openai import AsyncOpenAI
 from agents import OpenAIChatCompletionsModel
 
 from app.agent import create_yuri_agent
+from config import settings
 
 set_default_openai_api("chat_completions")
 set_tracing_disabled(True)
 
 client = AsyncOpenAI(
-    base_url="http://localhost:11434/v1",
-    api_key="ollama",
+    base_url=settings.OLLAMA_BASE_URL,
+    api_key=settings.OLLAMA_API_KEY,
 )
 
 model = OpenAIChatCompletionsModel(
-    model="llama3.2:3b-instruct-fp16",
+    model=settings.OLLAMA_MODEL,
     openai_client=client,
 )
 
