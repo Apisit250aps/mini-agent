@@ -1,6 +1,7 @@
 from agents import Agent
 
 from app.tools.files import read_file, scan_directory, write_file
+from app.tools.youtube_downloader import download_youtube_video, search_youtube, search_and_download_song
 from app.tools.memory import recall_memory, save_memory
 
 import io
@@ -23,6 +24,9 @@ def create_yuri_agent(model) -> Agent:
             scan_directory,
             read_file,
             write_file,
+            search_youtube,
+            download_youtube_video,
+            search_and_download_song,
         ],
         instructions=(base_personal_knowledge),
         model=model,
